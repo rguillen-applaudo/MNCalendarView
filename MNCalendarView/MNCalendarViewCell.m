@@ -41,8 +41,18 @@ NSString *const MNCalendarViewCellIdentifier = @"MNCalendarViewCellIdentifier";
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.titleLabel.userInteractionEnabled = NO;
     self.titleLabel.backgroundColor = [UIColor clearColor];
+      
+      self.monthNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 15.f)];
+      self.monthNameLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+      self.monthNameLabel.font = [UIFont systemFontOfSize:8.f];
+      self.monthNameLabel.textColor = [UIColor grayColor];
+      self.monthNameLabel.highlightedTextColor = [UIColor whiteColor];
+      self.monthNameLabel.textAlignment = NSTextAlignmentCenter;
+      self.monthNameLabel.userInteractionEnabled = NO;
+      self.monthNameLabel.backgroundColor = [UIColor clearColor];
     
     [self.contentView addSubview:self.titleLabel];
+      [self.contentView addSubview:self.monthNameLabel];
     
     self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
     self.selectedBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;

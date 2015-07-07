@@ -10,7 +10,7 @@
 #import "MNCalendarViewLayout.h"
 #import "MNCalendarViewDayCell.h"
 #import "MNCalendarViewWeekdayCell.h"
-#import "MNCalendarHeaderView.h"
+// #import "MNCalendarHeaderView.h"
 #import "MNFastDateEnumeration.h"
 #import "NSDate+MNAdditions.h"
 
@@ -43,7 +43,7 @@
   self.toDate     = [self.fromDate dateByAddingTimeInterval:MN_YEAR * 4];
   self.daysInWeek = 7;
   
-  self.headerViewClass  = MNCalendarHeaderView.class;
+  // self.headerViewClass  = MNCalendarHeaderView.class;
   self.weekdayCellClass = MNCalendarViewWeekdayCell.class;
   self.dayCellClass     = MNCalendarViewDayCell.class;
   
@@ -83,6 +83,7 @@
     _collectionView.showsVerticalScrollIndicator = NO;
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
+      _collectionView.pagingEnabled = YES;
     
     [self registerUICollectionViewClasses];
   }
@@ -132,9 +133,9 @@
   [_collectionView registerClass:self.weekdayCellClass
       forCellWithReuseIdentifier:MNCalendarViewWeekdayCellIdentifier];
   
-  [_collectionView registerClass:self.headerViewClass
-      forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-             withReuseIdentifier:MNCalendarHeaderViewIdentifier];
+  // [_collectionView registerClass:self.headerViewClass
+  //     forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
+  //            withReuseIdentifier:MNCalendarHeaderViewIdentifier];
 }
 
 - (NSDate *)firstVisibleDateOfMonth:(NSDate *)date {
@@ -203,19 +204,19 @@
   return self.monthDates.count;
 }
 
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView
-           viewForSupplementaryElementOfKind:(NSString *)kind
-                                 atIndexPath:(NSIndexPath *)indexPath {
-  MNCalendarHeaderView *headerView =
-    [collectionView dequeueReusableSupplementaryViewOfKind:kind
-                                       withReuseIdentifier:MNCalendarHeaderViewIdentifier
-                                              forIndexPath:indexPath];
+// - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView
+//            viewForSupplementaryElementOfKind:(NSString *)kind
+//                                  atIndexPath:(NSIndexPath *)indexPath {
+//   MNCalendarHeaderView *headerView =
+//     [collectionView dequeueReusableSupplementaryViewOfKind:kind
+//                                        withReuseIdentifier:MNCalendarHeaderViewIdentifier
+//                                               forIndexPath:indexPath];
 
-  headerView.backgroundColor = self.collectionView.backgroundColor;
-  headerView.titleLabel.text = [self.monthFormatter stringFromDate:self.monthDates[indexPath.section]];
+//   headerView.backgroundColor = self.collectionView.backgroundColor;
+//   headerView.titleLabel.text = [self.monthFormatter stringFromDate:self.monthDates[indexPath.section]];
 
-  return headerView;
-}
+//   return headerView;
+// }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
   NSDate *monthDate = self.monthDates[section];
@@ -225,7 +226,7 @@
                      fromDate:[self firstVisibleDateOfMonth:monthDate]
                        toDate:[self lastVisibleDateOfMonth:monthDate]
                       options:0];
-  
+  NSLog(@"%lu +  %ld", (unsigned long)self.daysInWeek, (long)components.day);
   return self.daysInWeek + components.day + 1;
 }
 
@@ -238,7 +239,8 @@
                                                 forIndexPath:indexPath];
     
     cell.backgroundColor = self.collectionView.backgroundColor;
-    cell.titleLabel.text = self.weekdaySymbols[indexPath.item];
+//    cell.titleLabel.text = self.weekdaySymbols[indexPath.item];
+     cell.titleLabel.text = @"";
     cell.separatorColor = self.separatorColor;
     return cell;
   }
@@ -305,7 +307,7 @@
   
   CGFloat width      = self.bounds.size.width;
   CGFloat itemWidth  = roundf(width / self.daysInWeek);
-  CGFloat itemHeight = indexPath.item < self.daysInWeek ? 30.f : itemWidth;
+  CGFloat itemHeight = indexPath.item < self.daysInWeek ? 0.f : 45.0f;
   
   NSUInteger weekday = indexPath.item % self.daysInWeek;
   

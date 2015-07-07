@@ -37,8 +37,20 @@ NSString *const MNCalendarViewDayCellIdentifier = @"MNCalendarViewDayCellIdentif
                    fromDate:self.month];
   
   self.weekday = components.weekday;
-  self.titleLabel.text = [NSString stringWithFormat:@"%d", components.day];
+  self.titleLabel.text = [NSString stringWithFormat:@"%ld", (long)components.day];
+    
   self.enabled = monthComponents.month == components.month;
+    
+    if ([[NSString stringWithFormat:@"%ld", (long)components.day] isEqualToString:@"1"]) {
+        if (self.enabled) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"MMMM"];
+            NSString *stringFromDate = [formatter stringFromDate:self.month];
+            self.monthNameLabel.text = [NSString stringWithFormat:@"%@", stringFromDate];
+        }
+    }else{
+        self.monthNameLabel.text = @"";
+    }
   
   [self setNeedsDisplay];
 }
