@@ -22,4 +22,6 @@ CG_EXTERN void MNContextDrawLine(CGContextRef c, CGPoint start, CGPoint end, CGC
 
 @property(nonatomic, strong) UILabel *monthNameLabel;
 
+@property(nonatomic, strong) UIView *eventKindsView;
+
 @end
