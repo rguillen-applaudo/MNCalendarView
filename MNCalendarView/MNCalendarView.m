@@ -271,6 +271,8 @@
   if (self.selectedDate && cell.enabled) {
     [cell setSelected:[date isEqualToDate:self.selectedDate]];
   }
+    
+    [self cell:cell checkForEventsAtIndexPath:indexPath];
   
   return cell;
 }
@@ -316,6 +318,83 @@
   }
   
   return CGSizeMake(itemWidth, itemHeight);
+}
+
+- (void)cell:(MNCalendarViewDayCell *)cell checkForEventsAtIndexPath:(NSIndexPath *)indexPath{
+//    TODO: check data for this booleands
+    float has_practice = [self getYesOrNo];
+    float has_meet = [self getYesOrNo];
+    float has_meeting = [self getYesOrNo];
+    
+    
+    [[[cell eventKindsView] subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    NSMutableArray *eventsKindArray = [[NSMutableArray alloc] initWithCapacity:2];
+    if (has_practice) {
+        [eventsKindArray addObject:@{@"kind" : @"practice", @"color" : [UIColor blackColor]}];
+    }
+    if (has_meet) {
+        [eventsKindArray addObject:@{@"kind" : @"meet", @"color" : [UIColor grayColor]}];
+    }
+    if (has_meeting) {
+        [eventsKindArray addObject:@{@"kind" : @"meeting", @"color" : [UIColor lightGrayColor]}];
+    }
+    
+    if (eventsKindArray.count > 0) {
+        int item = 0;
+        for (NSDictionary *eventKindItem in eventsKindArray) {
+            if (eventsKindArray.count == 1) {
+                if (item == 0) {
+                    UIView *itemView = [[UIView alloc] initWithFrame:CGRectMake(11, 0, 8, 8)];
+                    [itemView setBackgroundColor:[eventKindItem valueForKey:@"color"]];
+                    itemView.layer.cornerRadius = 4;
+                    [[cell eventKindsView] addSubview:itemView];
+                }
+            }
+            else if (eventsKindArray.count == 2){
+                if (item == 0) {
+                    UIView *itemView = [[UIView alloc] initWithFrame:CGRectMake(3.5, 0, 8, 8)];
+                    [itemView setBackgroundColor:[eventKindItem valueForKey:@"color"]];
+                    itemView.layer.cornerRadius = 4;
+                    [[cell eventKindsView] addSubview:itemView];
+                }
+                else if (item == 1){
+                    UIView *itemView = [[UIView alloc] initWithFrame:CGRectMake(18.5, 0, 8, 8)];
+                    [itemView setBackgroundColor:[eventKindItem valueForKey:@"color"]];
+                    itemView.layer.cornerRadius = 4;
+                    [[cell eventKindsView] addSubview:itemView];
+                }
+            }
+            else if (eventsKindArray.count ==3){
+                if (item == 0) {
+                    UIView *itemView = [[UIView alloc] initWithFrame:CGRectMake(1, 0, 8, 8)];
+                    [itemView setBackgroundColor:[eventKindItem valueForKey:@"color"]];
+                    itemView.layer.cornerRadius = 4;
+                    [[cell eventKindsView] addSubview:itemView];
+                }
+                else if (item == 1){
+                    UIView *itemView = [[UIView alloc] initWithFrame:CGRectMake(11, 0, 8, 8)];
+                    [itemView setBackgroundColor:[eventKindItem valueForKey:@"color"]];
+                    itemView.layer.cornerRadius = 4;
+                    [[cell eventKindsView] addSubview:itemView];
+                }
+                else if (item == 2){
+                    UIView *itemView = [[UIView alloc] initWithFrame:CGRectMake(21, 0, 8, 8)];
+                    [itemView setBackgroundColor:[eventKindItem valueForKey:@"color"]];
+                    itemView.layer.cornerRadius = 4;
+                    [[cell eventKindsView] addSubview:itemView];
+                }
+            }
+            item += 1;
+        }
+    }
+}
+
+-(BOOL)getYesOrNo
+{
+    int tmp = (arc4random() % 30)+1;
+    if(tmp % 5 == 0)
+        return YES;
+    return NO;
 }
 
 @end

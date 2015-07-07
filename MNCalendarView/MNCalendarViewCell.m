@@ -51,7 +51,7 @@ NSString *const MNCalendarViewCellIdentifier = @"MNCalendarViewCellIdentifier";
       self.monthNameLabel.userInteractionEnabled = NO;
       self.monthNameLabel.backgroundColor = [UIColor clearColor];
 
-      self.eventKindsView = [[UIView alloc] initWithFrame:CGRectMake(0, 36, 30, 8)];
+      self.eventKindsView = [[UIView alloc] initWithFrame:CGRectMake(0, 35, 30, 8)];
       self.eventKindsView.backgroundColor = [UIColor clearColor];
     
     [self.contentView addSubview:self.titleLabel];
@@ -61,7 +61,7 @@ NSString *const MNCalendarViewCellIdentifier = @"MNCalendarViewCellIdentifier";
     self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
     self.selectedBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     self.selectedBackgroundView.backgroundColor = [UIColor clearColor];
-      self.selectedBackgroundView.layer.cornerRadius = (25/2);
+      self.selectedBackgroundView.layer.cornerRadius = (24/2);
       self.selectedBackgroundView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
       self.selectedBackgroundView.layer.borderWidth = 1.0f;
   }
@@ -72,9 +72,9 @@ NSString *const MNCalendarViewCellIdentifier = @"MNCalendarViewCellIdentifier";
   [super layoutSubviews];
   
   self.contentView.frame = self.bounds;
-  self.selectedBackgroundView.frame = CGRectMake(0, 0, 25, 25);
+  self.selectedBackgroundView.frame = CGRectMake(0, 0, 24, 24);
     self.selectedBackgroundView.center = self.contentView.center;
-    self.eventKindsView.frame = CGRectMake((self.bounds.size.width / 2) - 15, 36, 30, 8);
+    self.eventKindsView.frame = CGRectMake((self.bounds.size.width / 2) - 15, 35, 30, 8);
 }
 
 - (void)drawRect:(CGRect)rect {
