@@ -324,10 +324,9 @@
 }
 
 - (void)cell:(MNCalendarViewDayCell *)cell checkForEventsAtIndexPath:(NSIndexPath *)indexPath{
-//    TODO: check data for this booleands
-    float has_practice = [self getYesOrNo];
-    float has_meet = [self getYesOrNo];
-    float has_meeting = [self getYesOrNo];
+    float has_practice = [self checkIfDate:cell.date hasEventKind:@"practice"];
+    float has_meet = [self checkIfDate:cell.date hasEventKind:@"meet"];
+    float has_meeting = [self checkIfDate:cell.date hasEventKind:@"meeting"];
     
     
     [[[cell eventKindsView] subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -390,6 +389,13 @@
             item += 1;
         }
     }
+}
+
+-(BOOL)checkIfDate:(NSDate *)date hasEventKind:(NSString *)eventKind{
+    // TODO: check if date has event kind
+    // TODO: cache booleans for date
+    NSLog(@"check %@ event for %@", eventKind, date);
+    return [self getYesOrNo];
 }
 
 -(BOOL)getYesOrNo
