@@ -324,20 +324,35 @@
 }
 
 - (void)cell:(MNCalendarViewDayCell *)cell checkForEventsAtIndexPath:(NSIndexPath *)indexPath{
-    float has_practice = [self checkIfDate:cell.date hasEventKind:@"practice"];
-    float has_meet = [self checkIfDate:cell.date hasEventKind:@"meet"];
-    float has_meeting = [self checkIfDate:cell.date hasEventKind:@"meeting"];
+    // TODO: get eventKinds from _eventKindsArray for date
+    // Example:
+    _calendarKindsArray = [[NSMutableArray alloc] initWithArray:@[@{@"date" : @"10"}]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", @"10"];
+    NSArray *filteredArray = [_calendarKindsArray filteredArrayUsingPredicate:predicate];
+    id firstFoundObject = filteredArray.firstObject;
+    NSLog(@"Result: %@", firstFoundObject);
+    // Example
+    
+    NSDictionary *eventKinds = @{
+                                 @"date" : [cell date],
+                                 @"has_practice" : @"1",
+                                 @"has_meet" : @"1",
+                                 @"has_meeting" : @"1"
+                                 };
+    BOOL hasPractice = [[eventKinds valueForKey:@"has_practice"] boolValue];
+    BOOL hasMeet = [[eventKinds valueForKey:@"has_meet"] boolValue];
+    BOOL hasMeeting = [[eventKinds valueForKey:@"has_meeting"] boolValue];
     
     
     [[[cell eventKindsView] subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     NSMutableArray *eventsKindArray = [[NSMutableArray alloc] initWithCapacity:2];
-    if (has_practice) {
+    if (hasPractice) {
         [eventsKindArray addObject:@{@"kind" : @"practice", @"color" : [UIColor blackColor]}];
     }
-    if (has_meet) {
+    if (hasMeet) {
         [eventsKindArray addObject:@{@"kind" : @"meet", @"color" : [UIColor grayColor]}];
     }
-    if (has_meeting) {
+    if (hasMeeting) {
         [eventsKindArray addObject:@{@"kind" : @"meeting", @"color" : [UIColor lightGrayColor]}];
     }
     
@@ -391,19 +406,68 @@
     }
 }
 
--(BOOL)checkIfDate:(NSDate *)date hasEventKind:(NSString *)eventKind{
-    // TODO: check if date has event kind
-    // TODO: cache booleans for date
-    NSLog(@"check %@ event for %@", eventKind, date);
-    return [self getYesOrNo];
-}
-
+//-(BOOL)checkIfDate:(NSDate *)date hasEventKind:(NSString *)eventKind{
+//    // TODO: check if date has event kind
+//    // TODO: get event kinds from _calendarKindsArray for date
+//    // TODO: get booleans from calendarKinds for date
+//    // TODO: cache booleans for date
+//    NSLog(@"check %@ event for %@", eventKind, date);
+//    // TODO: return boolean for
+//    return [self getYesOrNo];
+//}
+//
 -(BOOL)getYesOrNo
 {
     int tmp = (arc4random() % 30)+1;
     if(tmp % 5 == 0)
         return YES;
     return NO;
+}
+
+#pragma mark -
+#pragma mark Scroll View delegate
+
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    CGFloat pageHeight = _collectionView.frame.size.height;
+    float currentPage = _collectionView.contentOffset.y / pageHeight;
+
+    if (0.0f != fmodf(currentPage, 1.0f))
+    {
+//        pageControl.currentPage = currentPage + 1;
+        currentPage += 1;
+    }
+    else
+    {
+//        pageControl.currentPage = currentPage;
+    }
+
+    NSLog(@"Changed Page Number : %f", currentPage);
+    [self calendarChangedToPage:currentPage];
+}
+
+#pragma mark -
+#pragma mark Scroll View delegate
+
+
+-(void)calendarChangedToPage:(float)page{
+  NSMutableArray *datesArray = [[NSMutableArray alloc] initWithCapacity:0];
+  [_collectionView layoutIfNeeded];
+    for (UICollectionViewCell *cell in [self.collectionView visibleCells]) {
+        if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
+            NSLog(@"DATE %@", [(MNCalendarViewDayCell *)cell date]);
+            [datesArray addObject:[(MNCalendarViewDayCell *)cell date]];
+        }
+    }
+    
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:YES];
+    NSArray *descriptors = [NSArray arrayWithObject: descriptor];
+    NSArray *sortedDatesArray = [datesArray sortedArrayUsingDescriptors:descriptors];
+    
+    NSLog(@"\n firts date %@ \n last date %@", [sortedDatesArray firstObject], [sortedDatesArray lastObject]);
+    
+    [_delegate calendarView:self shouldCheckEventKindsFromStartDate:[sortedDatesArray firstObject] toEndDate:[sortedDatesArray lastObject]];
 }
 
 @end

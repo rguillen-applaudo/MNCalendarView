@@ -26,6 +26,7 @@
 @property(nonatomic,copy)   NSDate     *fromDate;
 @property(nonatomic,copy)   NSDate     *toDate;
 @property(nonatomic,copy)   NSDate     *selectedDate;
+@property(nonatomic, strong) NSMutableArray *calendarKindsArray;
 
 @property(nonatomic,strong) UIColor *separatorColor UI_APPEARANCE_SELECTOR; // default is the standard separator gray
 
@@ -36,6 +37,8 @@
 - (void)reloadData;
 - (void)registerUICollectionViewClasses; 
 
+-(void)calendarChangedToPage:(float)page;
+
 @end
 
 @protocol MNCalendarViewDelegate <NSObject>
@@ -44,5 +47,6 @@
 
 - (BOOL)calendarView:(MNCalendarView *)calendarView shouldSelectDate:(NSDate *)date;
 - (void)calendarView:(MNCalendarView *)calendarView didSelectDate:(NSDate *)date;
+- (void)calendarView:(MNCalendarView *)calendarView shouldCheckEventKindsFromStartDate:(NSDate *)startDate toEndDate:(NSDate *)endDate;
 
 @end
