@@ -39,6 +39,10 @@
 
 -(void)calendarChangedToPage:(float)page;
 
+//
+-(BOOL)calendarKindsArrayHasArrayFor:(float)page;
+-(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page;
+
 @end
 
 @protocol MNCalendarViewDelegate <NSObject>
@@ -47,6 +51,6 @@
 
 - (BOOL)calendarView:(MNCalendarView *)calendarView shouldSelectDate:(NSDate *)date;
 - (void)calendarView:(MNCalendarView *)calendarView didSelectDate:(NSDate *)date;
-- (void)calendarView:(MNCalendarView *)calendarView shouldCheckEventKindsFromStartDate:(NSDate *)startDate toEndDate:(NSDate *)endDate;
+- (void)calendarView:(MNCalendarView *)calendarView shouldCheckEventKindsFromStartDate:(NSDate *)startDate toEndDate:(NSDate *)endDate  inPage:(float)page;
 
 @end

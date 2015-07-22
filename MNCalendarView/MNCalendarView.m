@@ -326,11 +326,11 @@
 - (void)cell:(MNCalendarViewDayCell *)cell checkForEventsAtIndexPath:(NSIndexPath *)indexPath{
     // TODO: get eventKinds from _eventKindsArray for date
     // Example:
-    _calendarKindsArray = [[NSMutableArray alloc] initWithArray:@[@{@"date" : @"10"}]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", @"10"];
-    NSArray *filteredArray = [_calendarKindsArray filteredArrayUsingPredicate:predicate];
-    id firstFoundObject = filteredArray.firstObject;
-    NSLog(@"Result: %@", firstFoundObject);
+    // _calendarKindsArray = [[NSMutableArray alloc] initWithArray:@[@{@"date" : @"10"}]];
+    // NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", @"10"];
+    // NSArray *filteredArray = [_calendarKindsArray filteredArrayUsingPredicate:predicate];
+    // id firstFoundObject = filteredArray.firstObject;
+    // NSLog(@"Result: %@", firstFoundObject);
     // Example
     
     NSDictionary *eventKinds = @{
@@ -467,7 +467,24 @@
     
     NSLog(@"\n firts date %@ \n last date %@", [sortedDatesArray firstObject], [sortedDatesArray lastObject]);
     
-    [_delegate calendarView:self shouldCheckEventKindsFromStartDate:[sortedDatesArray firstObject] toEndDate:[sortedDatesArray lastObject]];
+    [_delegate calendarView:self shouldCheckEventKindsFromStartDate:[sortedDatesArray firstObject] toEndDate:[sortedDatesArray lastObject] inPage:page];
+}
+
+//
+
+-(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page{
+    [_calendarKindsArray addObject:calendarKinds];
+  [[self collectionView] reloadData];
+}
+
+-(BOOL)calendarKindsArrayHasArrayFor:(float)page{
+  // TODO - RG - Check Main Array for page
+    NSArray *targetPage = [_calendarKindsArray objectAtIndex:page-1];
+    if (!targetPage){
+        return NO;
+    }
+    
+    return YES;
 }
 
 @end
