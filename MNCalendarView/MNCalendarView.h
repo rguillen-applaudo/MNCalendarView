@@ -38,10 +38,10 @@
 - (void)registerUICollectionViewClasses; 
 
 -(void)calendarChangedToPage:(float)page;
-
-//
--(BOOL)calendarKindsArrayHasArrayFor:(float)page;
 -(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page;
+
+
+-(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(float)page;
 
 @end
 

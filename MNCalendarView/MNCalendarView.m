@@ -23,6 +23,8 @@
 @property(nonatomic,strong,readwrite) NSArray *weekdaySymbols;
 @property(nonatomic,assign,readwrite) NSUInteger daysInWeek;
 
+@property long selectedPage;
+
 @property(nonatomic,strong,readwrite) NSDateFormatter *monthFormatter;
 
 - (NSDate *)firstVisibleDateOfMonth:(NSDate *)date;
@@ -324,21 +326,28 @@
 }
 
 - (void)cell:(MNCalendarViewDayCell *)cell checkForEventsAtIndexPath:(NSIndexPath *)indexPath{
-    // TODO: get eventKinds from _eventKindsArray for date
-    // Example:
-    // _calendarKindsArray = [[NSMutableArray alloc] initWithArray:@[@{@"date" : @"10"}]];
-    // NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", @"10"];
-    // NSArray *filteredArray = [_calendarKindsArray filteredArrayUsingPredicate:predicate];
-    // id firstFoundObject = filteredArray.firstObject;
-    // NSLog(@"Result: %@", firstFoundObject);
-    // Example
     
-    NSDictionary *eventKinds = @{
-                                 @"date" : [cell date],
-                                 @"has_practice" : @"1",
-                                 @"has_meet" : @"1",
-                                 @"has_meeting" : @"1"
-                                 };
+    NSLog(@"EL ARRAY %lu EN PAGE %ld", (unsigned long)[_calendarKindsArray count], self.selectedPage);
+    //TODO: - RG - CHECK THIS
+    if (self.selectedPage == [_calendarKindsArray count] + 1) {
+        NSLog(@"SI CALENDAR");
+    }
+    else{
+        NSLog(@"NO CALENDAR");
+    }
+//    if (([_calendarKindsArray count] - 1) <= self.selectedPage) {
+//        NSArray *kindsArray = [_calendarKindsArray objectAtIndex:self.selectedPage];
+//    }
+
+    
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", [self formatDate:cell.date withFormat:@"YYYY-MM-dd"]];
+//    NSArray *filteredArray = [kindsArray filteredArrayUsingPredicate:predicate];
+//    id firstFoundObject = filteredArray.firstObject;
+//    
+//    [self placeCirclesForEventKinds:firstFoundObject forCell:cell];
+}
+
+-(void)placeCirclesForEventKinds:(NSDictionary *)eventKinds forCell:(MNCalendarViewDayCell *)cell{
     BOOL hasPractice = [[eventKinds valueForKey:@"has_practice"] boolValue];
     BOOL hasMeet = [[eventKinds valueForKey:@"has_meet"] boolValue];
     BOOL hasMeeting = [[eventKinds valueForKey:@"has_meeting"] boolValue];
@@ -406,16 +415,6 @@
     }
 }
 
-//-(BOOL)checkIfDate:(NSDate *)date hasEventKind:(NSString *)eventKind{
-//    // TODO: check if date has event kind
-//    // TODO: get event kinds from _calendarKindsArray for date
-//    // TODO: get booleans from calendarKinds for date
-//    // TODO: cache booleans for date
-//    NSLog(@"check %@ event for %@", eventKind, date);
-//    // TODO: return boolean for
-//    return [self getYesOrNo];
-//}
-//
 -(BOOL)getYesOrNo
 {
     int tmp = (arc4random() % 30)+1;
@@ -430,21 +429,8 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    CGFloat pageHeight = _collectionView.frame.size.height;
-    float currentPage = _collectionView.contentOffset.y / pageHeight;
-
-    if (0.0f != fmodf(currentPage, 1.0f))
-    {
-//        pageControl.currentPage = currentPage + 1;
-        currentPage += 1;
-    }
-    else
-    {
-//        pageControl.currentPage = currentPage;
-    }
-
-    NSLog(@"Changed Page Number : %f", currentPage);
-    [self calendarChangedToPage:currentPage];
+    int pageNo = round(self.collectionView.contentOffset.y / self.collectionView.frame.size.height);
+    [self calendarChangedToPage:pageNo];
 }
 
 #pragma mark -
@@ -453,7 +439,7 @@
 
 -(void)calendarChangedToPage:(float)page{
   NSMutableArray *datesArray = [[NSMutableArray alloc] initWithCapacity:0];
-  [_collectionView layoutIfNeeded];
+//  [_collectionView layoutIfNeeded];
     for (UICollectionViewCell *cell in [self.collectionView visibleCells]) {
         if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
             NSLog(@"DATE %@", [(MNCalendarViewDayCell *)cell date]);
@@ -470,21 +456,31 @@
     [_delegate calendarView:self shouldCheckEventKindsFromStartDate:[sortedDatesArray firstObject] toEndDate:[sortedDatesArray lastObject] inPage:page];
 }
 
-//
-
 -(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page{
-    [_calendarKindsArray addObject:calendarKinds];
-  [[self collectionView] reloadData];
+    self.selectedPage = page;
+    if (_calendarKindsArray == nil) {
+        self.calendarKindsArray = [[NSMutableArray alloc] initWithCapacity:0];
+    }
+    [self.calendarKindsArray addObject:calendarKinds];
+    [self reloadData];
 }
 
--(BOOL)calendarKindsArrayHasArrayFor:(float)page{
-  // TODO - RG - Check Main Array for page
-    NSArray *targetPage = [_calendarKindsArray objectAtIndex:page-1];
-    if (!targetPage){
+-(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(float)page{
+    if (page > [_calendarKindsArray count]) {
+        NSLog(@"MAYOR QUE ARRAY, NO HAY");
         return NO;
     }
-    
-    return YES;
+    else{
+        NSLog(@"MENOR QUE ARRAY, SI HAY");
+        return YES;
+    }
+}
+
+-(NSString *)formatDate:(NSDate *)date withFormat:(NSString *)format{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:format];
+    NSString *stringFromDate = [formatter stringFromDate:date];
+    return stringFromDate;
 }
 
 @end
