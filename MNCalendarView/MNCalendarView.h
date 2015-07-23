@@ -40,6 +40,8 @@
 -(void)calendarChangedToPage:(float)page;
 -(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page;
 
+-(void)initEventCirclesForCurrentPage;
+
 
 -(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(float)page;
 

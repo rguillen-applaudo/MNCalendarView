@@ -23,7 +23,7 @@
 @property(nonatomic,strong,readwrite) NSArray *weekdaySymbols;
 @property(nonatomic,assign,readwrite) NSUInteger daysInWeek;
 
-@property NSInteger selectedPage;
+@property NSInteger currentPage;
 
 @property(nonatomic,strong,readwrite) NSDateFormatter *monthFormatter;
 
@@ -54,6 +54,10 @@
   [self addSubview:self.collectionView];
   [self applyConstraints];
   [self reloadData];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self calendarChangedToPage:0];
+    });
 }
 
 - (id)initWithFrame:(CGRect)frame {
@@ -273,8 +277,6 @@
   if (self.selectedDate && cell.enabled) {
     [cell setSelected:[date isEqualToDate:self.selectedDate]];
   }
-    
-    [self cell:cell checkForEventsAtIndexPath:indexPath];
   
   return cell;
 }
@@ -325,10 +327,11 @@
   return CGSizeMake(itemWidth, itemHeight);
 }
 
-- (void)cell:(MNCalendarViewDayCell *)cell checkForEventsAtIndexPath:(NSIndexPath *)indexPath{
-    if (self.selectedPage < [self.calendarKindsArray count])
+- (void)checkEventsInPageForCell:(MNCalendarViewDayCell *)cell {
+    
+    if (self.currentPage < [self.calendarKindsArray count])
     {
-        NSArray *kindsArray = [_calendarKindsArray objectAtIndex:self.selectedPage];
+        NSArray *kindsArray = [_calendarKindsArray objectAtIndex:self.currentPage];
         if (kindsArray && [kindsArray count] > 0) {
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", [self formatDate:cell.date withFormat:@"YYYY-MM-dd'T00:00:00.000Z'"]];
             NSArray *filteredArray = [kindsArray filteredArrayUsingPredicate:predicate];
@@ -421,15 +424,12 @@
 
 #pragma mark -
 #pragma mark Scroll View delegate
-
--(void)scrollViewDidScroll:(UIScrollView *)scrollView
-
-//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     NSInteger offset =self.collectionView.contentOffset.y;
     NSInteger height =self.collectionView.frame.size.height;
-//    NSInteger pageNo = round(self.collectionView.contentOffset.y / self.collectionView.frame.size.height);
     NSInteger pageNo = round(offset / height);
+    _currentPage = pageNo;
     [self calendarChangedToPage:pageNo];
 }
 
@@ -439,7 +439,7 @@
 
 -(void)calendarChangedToPage:(float)page{
   NSMutableArray *datesArray = [[NSMutableArray alloc] initWithCapacity:0];
-  [_collectionView layoutIfNeeded];
+//  [_collectionView layoutIfNeeded];
     for (UICollectionViewCell *cell in [self.collectionView visibleCells]) {
         if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
             NSLog(@"DATE %@", [(MNCalendarViewDayCell *)cell date]);
@@ -457,14 +457,12 @@
 }
 
 -(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page{
-    
-    self.selectedPage = page;
     if (_calendarKindsArray == nil) {
         self.calendarKindsArray = [[NSMutableArray alloc] initWithCapacity:0];
     }
     [self.calendarKindsArray addObject:calendarKinds];
-    
-    [[self collectionView] reloadData];
+//    self.currentPage = page;
+    [self initEventCirclesForCurrentPage];
 }
 
 -(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(float)page{
@@ -473,6 +471,15 @@
     }
     else{
         return NO;
+    }
+}
+
+-(void)initEventCirclesForCurrentPage{
+//    [_collectionView layoutIfNeeded];
+    for (UICollectionViewCell *cell in [self.collectionView visibleCells]) {
+        if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
+            [self checkEventsInPageForCell:(MNCalendarViewDayCell *)cell];
+        }
     }
 }
 
