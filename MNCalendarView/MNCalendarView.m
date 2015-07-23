@@ -442,7 +442,7 @@
 #pragma mark Scroll View delegate
 
 
--(void)calendarChangedToPage:(float)page{
+-(void)calendarChangedToPage:(NSInteger)page{
   NSMutableArray *datesArray = [[NSMutableArray alloc] initWithCapacity:0];
 //  [_collectionView layoutIfNeeded];
     for (UICollectionViewCell *cell in [self.collectionView visibleCells]) {
@@ -461,7 +461,7 @@
     [_delegate calendarView:self shouldCheckEventKindsFromStartDate:[sortedDatesArray firstObject] toEndDate:[sortedDatesArray lastObject] inPage:page];
 }
 
--(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page{
+-(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(NSInteger)page{
     
     if (_calendarKindsArray == nil) {
         self.calendarKindsArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -476,7 +476,7 @@
     [self initEventCirclesForCurrentPage];
 }
 
--(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(float)page{
+-(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(NSInteger)page{
 //    if (page < [_calendarKindsArray count]) {
 //        return YES;
 //    }

@@ -37,13 +37,13 @@
 - (void)reloadData;
 - (void)registerUICollectionViewClasses; 
 
--(void)calendarChangedToPage:(float)page;
--(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page;
+-(void)calendarChangedToPage:(NSInteger)page;
+-(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(NSInteger)page;
 
 -(void)initEventCirclesForCurrentPage;
 
 
--(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(float)page;
+-(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(NSInteger)page;
 
 @end
 
@@ -53,6 +53,6 @@
 
 - (BOOL)calendarView:(MNCalendarView *)calendarView shouldSelectDate:(NSDate *)date;
 - (void)calendarView:(MNCalendarView *)calendarView didSelectDate:(NSDate *)date;
-- (void)calendarView:(MNCalendarView *)calendarView shouldCheckEventKindsFromStartDate:(NSDate *)startDate toEndDate:(NSDate *)endDate  inPage:(float)page;
+- (void)calendarView:(MNCalendarView *)calendarView shouldCheckEventKindsFromStartDate:(NSDate *)startDate toEndDate:(NSDate *)endDate  inPage:(NSInteger)page;
 
 @end
