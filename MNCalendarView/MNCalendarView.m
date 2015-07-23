@@ -329,16 +329,21 @@
 
 - (void)checkEventsInPageForCell:(MNCalendarViewDayCell *)cell {
     
-    if (self.currentPage < [self.calendarKindsArray count])
+    if ([self calendarViewCheckIfCalendarHasKindsArrayForPage:self.currentPage])
     {
-        NSArray *kindsArray = [_calendarKindsArray objectAtIndex:self.currentPage];
-        if (kindsArray && [kindsArray count] > 0) {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", [self formatDate:cell.date withFormat:@"YYYY-MM-dd'T00:00:00.000Z'"]];
-            NSArray *filteredArray = [kindsArray filteredArrayUsingPredicate:predicate];
-            if ([filteredArray count] > 0) {
-                id firstFoundObject = filteredArray.firstObject;
-                if (firstFoundObject) {
-                    [self placeCirclesForEventKinds:firstFoundObject forCell:cell];
+        NSPredicate *predicateForMainArray = [NSPredicate predicateWithFormat:@"page == %@", @(self.currentPage)];
+        NSArray *filteredMainArray = [self.calendarKindsArray filteredArrayUsingPredicate:predicateForMainArray];
+        NSDictionary *firstObjectMainArray = (NSDictionary *)filteredMainArray.firstObject;
+        if (firstObjectMainArray) {
+            NSArray *kindsArray = (NSArray *)[firstObjectMainArray objectForKey:@"eventKinds"];
+            if (kindsArray && [kindsArray count] > 0) {
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", [self formatDate:cell.date withFormat:@"YYYY-MM-dd'T00:00:00.000Z'"]];
+                NSArray *filteredArray = [kindsArray filteredArrayUsingPredicate:predicate];
+                if ([filteredArray count] > 0) {
+                    id firstFoundObject = filteredArray.firstObject;
+                    if (firstFoundObject) {
+                        [self placeCirclesForEventKinds:firstFoundObject forCell:cell];
+                    }
                 }
             }
         }
@@ -457,21 +462,40 @@
 }
 
 -(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page{
+    
     if (_calendarKindsArray == nil) {
         self.calendarKindsArray = [[NSMutableArray alloc] initWithCapacity:0];
     }
-    [self.calendarKindsArray addObject:calendarKinds];
-//    self.currentPage = page;
+    
+    [self.calendarKindsArray addObject:@{
+                                         @"page": @(page),
+                                         @"eventKinds" : calendarKinds
+                                         }
+     ];
+
     [self initEventCirclesForCurrentPage];
 }
 
 -(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(float)page{
-    if (page < [_calendarKindsArray count]) {
+//    if (page < [_calendarKindsArray count]) {
+//        return YES;
+//    }
+//    else{
+//        return NO;
+//    }
+    
+    // checking if array already has an item for @(page)
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"page == %@", @(page)];
+    NSArray *filteredArray = [self.calendarKindsArray filteredArrayUsingPredicate:predicate];
+    if ([filteredArray count] > 0) {
+        // ya tiene
         return YES;
     }
     else{
+        // no tiene
         return NO;
     }
+    //
 }
 
 -(void)initEventCirclesForCurrentPage{
