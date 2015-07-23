@@ -23,7 +23,7 @@
 @property(nonatomic,strong,readwrite) NSArray *weekdaySymbols;
 @property(nonatomic,assign,readwrite) NSUInteger daysInWeek;
 
-@property long selectedPage;
+@property NSInteger selectedPage;
 
 @property(nonatomic,strong,readwrite) NSDateFormatter *monthFormatter;
 
@@ -326,28 +326,24 @@
 }
 
 - (void)cell:(MNCalendarViewDayCell *)cell checkForEventsAtIndexPath:(NSIndexPath *)indexPath{
-    
-    NSLog(@"EL ARRAY %lu EN PAGE %ld", (unsigned long)[_calendarKindsArray count], self.selectedPage);
-    //TODO: - RG - CHECK THIS
-    if (self.selectedPage == [_calendarKindsArray count] + 1) {
-        NSLog(@"SI CALENDAR");
+    if (self.selectedPage < [self.calendarKindsArray count])
+    {
+        NSArray *kindsArray = [_calendarKindsArray objectAtIndex:self.selectedPage];
+        if (kindsArray && [kindsArray count] > 0) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", [self formatDate:cell.date withFormat:@"YYYY-MM-dd'T00:00:00.000Z'"]];
+            NSArray *filteredArray = [kindsArray filteredArrayUsingPredicate:predicate];
+            if ([filteredArray count] > 0) {
+                id firstFoundObject = filteredArray.firstObject;
+                if (firstFoundObject) {
+                    [self placeCirclesForEventKinds:firstFoundObject forCell:cell];
+                }
+            }
+        }
     }
-    else{
-        NSLog(@"NO CALENDAR");
-    }
-//    if (([_calendarKindsArray count] - 1) <= self.selectedPage) {
-//        NSArray *kindsArray = [_calendarKindsArray objectAtIndex:self.selectedPage];
-//    }
-
-    
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", [self formatDate:cell.date withFormat:@"YYYY-MM-dd"]];
-//    NSArray *filteredArray = [kindsArray filteredArrayUsingPredicate:predicate];
-//    id firstFoundObject = filteredArray.firstObject;
-//    
-//    [self placeCirclesForEventKinds:firstFoundObject forCell:cell];
 }
 
 -(void)placeCirclesForEventKinds:(NSDictionary *)eventKinds forCell:(MNCalendarViewDayCell *)cell{
+    
     BOOL hasPractice = [[eventKinds valueForKey:@"has_practice"] boolValue];
     BOOL hasMeet = [[eventKinds valueForKey:@"has_meet"] boolValue];
     BOOL hasMeeting = [[eventKinds valueForKey:@"has_meeting"] boolValue];
@@ -426,10 +422,14 @@
 #pragma mark -
 #pragma mark Scroll View delegate
 
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    int pageNo = round(self.collectionView.contentOffset.y / self.collectionView.frame.size.height);
+    NSInteger offset =self.collectionView.contentOffset.y;
+    NSInteger height =self.collectionView.frame.size.height;
+//    NSInteger pageNo = round(self.collectionView.contentOffset.y / self.collectionView.frame.size.height);
+    NSInteger pageNo = round(offset / height);
     [self calendarChangedToPage:pageNo];
 }
 
@@ -439,7 +439,7 @@
 
 -(void)calendarChangedToPage:(float)page{
   NSMutableArray *datesArray = [[NSMutableArray alloc] initWithCapacity:0];
-//  [_collectionView layoutIfNeeded];
+  [_collectionView layoutIfNeeded];
     for (UICollectionViewCell *cell in [self.collectionView visibleCells]) {
         if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
             NSLog(@"DATE %@", [(MNCalendarViewDayCell *)cell date]);
@@ -457,22 +457,22 @@
 }
 
 -(void)setCalendarKinds:(NSArray *)calendarKinds ForPage:(float)page{
+    
     self.selectedPage = page;
     if (_calendarKindsArray == nil) {
         self.calendarKindsArray = [[NSMutableArray alloc] initWithCapacity:0];
     }
     [self.calendarKindsArray addObject:calendarKinds];
-    [self reloadData];
+    
+    [[self collectionView] reloadData];
 }
 
 -(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(float)page{
-    if (page > [_calendarKindsArray count]) {
-        NSLog(@"MAYOR QUE ARRAY, NO HAY");
-        return NO;
+    if (page < [_calendarKindsArray count]) {
+        return YES;
     }
     else{
-        NSLog(@"MENOR QUE ARRAY, SI HAY");
-        return YES;
+        return NO;
     }
 }
 

@@ -84,4 +84,11 @@ NSString *const MNCalendarViewDayCellIdentifier = @"MNCalendarViewDayCellIdentif
   }
 }
 
+- (void)prepareForReuse
+{
+    [[[self eventKindsView] subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [super prepareForReuse];
+    
+}
+
 @end
