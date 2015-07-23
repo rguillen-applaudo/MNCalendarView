@@ -57,6 +57,8 @@
 
     dispatch_async(dispatch_get_main_queue(), ^{
         [self calendarChangedToPage:0];
+        
+        // calcular pagina
     });
 }
 
@@ -236,8 +238,7 @@
   return self.daysInWeek + components.day + 1;
 }
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
-                  cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
 
   if (indexPath.item < self.daysInWeek) {
     MNCalendarViewWeekdayCell *cell =
@@ -444,7 +445,6 @@
 
 -(void)calendarChangedToPage:(NSInteger)page{
   NSMutableArray *datesArray = [[NSMutableArray alloc] initWithCapacity:0];
-//  [_collectionView layoutIfNeeded];
     for (UICollectionViewCell *cell in [self.collectionView visibleCells]) {
         if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
             NSLog(@"DATE %@", [(MNCalendarViewDayCell *)cell date]);
@@ -477,13 +477,6 @@
 }
 
 -(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(NSInteger)page{
-//    if (page < [_calendarKindsArray count]) {
-//        return YES;
-//    }
-//    else{
-//        return NO;
-//    }
-    
     // checking if array already has an item for @(page)
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"page == %@", @(page)];
     NSArray *filteredArray = [self.calendarKindsArray filteredArrayUsingPredicate:predicate];
@@ -499,7 +492,6 @@
 }
 
 -(void)initEventCirclesForCurrentPage{
-//    [_collectionView layoutIfNeeded];
     for (UICollectionViewCell *cell in [self.collectionView visibleCells]) {
         if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
             [self checkEventsInPageForCell:(MNCalendarViewDayCell *)cell];
