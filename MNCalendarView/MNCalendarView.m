@@ -293,7 +293,6 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-     // NSLog(@"CALENDAR DID SELECT ROW 1");
   MNCalendarViewCell *cell = (MNCalendarViewCell *)[self collectionView:collectionView cellForItemAtIndexPath:indexPath];
 
   if ([cell isKindOfClass:MNCalendarViewDayCell.class] && cell.enabled) {
@@ -302,12 +301,8 @@
     self.selectedDate = dayCell.date;
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(calendarView:didSelectDate:)]) {
-        // NSLog(@"CALENDAR DID SELECT ROW 2");
       [self.delegate calendarView:self didSelectDate:dayCell.date];
-       // NSLog(@"CALENDAR DID SELECT ROW 3");
     }
-    
-    [self.collectionView reloadData];
   }
 }
 
