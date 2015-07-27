@@ -45,6 +45,9 @@
 
 -(BOOL)calendarViewCheckIfCalendarHasKindsArrayForPage:(NSInteger)page;
 
+-(void)showCalendarActivityIndicator;
+-(void)hideCalendarActivityIndicator;
+
 @end
 
 @protocol MNCalendarViewDelegate <NSObject>

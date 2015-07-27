@@ -23,6 +23,8 @@
 @property(nonatomic,strong,readwrite) NSArray *weekdaySymbols;
 @property(nonatomic,assign,readwrite) NSUInteger daysInWeek;
 
+@property (nonatomic, strong) UIActivityIndicatorView *calendarActivityIndicator;
+
 @property NSInteger currentPage;
 
 @property(nonatomic,strong,readwrite) NSDateFormatter *monthFormatter;
@@ -499,6 +501,23 @@
     [formatter setDateFormat:format];
     NSString *stringFromDate = [formatter stringFromDate:date];
     return stringFromDate;
+}
+
+-(void)showCalendarActivityIndicator
+{
+    _calendarActivityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 45, 45)];
+    _calendarActivityIndicator.center = self.collectionView.center;
+    [_calendarActivityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+    [_calendarActivityIndicator startAnimating];
+    [_calendarActivityIndicator setHidden:NO];
+    [self insertSubview:_calendarActivityIndicator aboveSubview:self.collectionView];
+}
+
+-(void)hideCalendarActivityIndicator
+{
+    [_calendarActivityIndicator stopAnimating];
+    [_calendarActivityIndicator setHidden:YES];
+    [_calendarActivityIndicator removeFromSuperview];
 }
 
 @end
