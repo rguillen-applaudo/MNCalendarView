@@ -58,7 +58,7 @@
   [self reloadData];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self calendarChangedToPage:0];
+//        [self calendarChangedToPage:0];
         
         // calcular pagina
         [self calendarScrollToDatePositionFor:_selectedDate];
@@ -426,15 +426,28 @@
     return NO;
 }
 
+-(void)calendarViewCallScrollviewScroll{
+    [self scrollViewDidEndDecelerating:self.collectionView];
+}
+
 #pragma mark -
 #pragma mark Scroll View delegate
+-(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView{
+    _currentPage = [self calculateCurrentPage];
+    [self calendarChangedToPage:_currentPage];
+}
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    _currentPage = [self calculateCurrentPage];
+    [self calendarChangedToPage:_currentPage];
+}
+
+-(NSInteger)calculateCurrentPage{
     NSInteger offset =self.collectionView.contentOffset.y;
     NSInteger height =self.collectionView.frame.size.height;
     NSInteger pageNo = round(offset / height);
-    _currentPage = pageNo;
-    [self calendarChangedToPage:pageNo];
+    return pageNo;
 }
 
 #pragma mark -
@@ -533,6 +546,15 @@
     NSLog(@"WEEK OF MONTH %@ scroll %d", stringFromDate, ((int)[stringFromDate intValue] - 1) * 45);
     int newOffset = ((int)[stringFromDate intValue] - 1) * 45;
     [self.collectionView setContentOffset:CGPointMake(0, self.collectionView.contentOffset.y + newOffset) animated:YES];
+    
+    // calc page
+    
+//    NSInteger offset =self.collectionView.contentOffset.y;
+//    NSInteger height =self.collectionView.frame.size.height;
+//    NSInteger pageNo = round(offset / height);
+//    _currentPage = pageNo;
+//    [self calendarChangedToPage:pageNo];
+    //
 }
 
 @end

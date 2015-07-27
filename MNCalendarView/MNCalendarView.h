@@ -48,6 +48,8 @@
 -(void)showCalendarActivityIndicator;
 -(void)hideCalendarActivityIndicator;
 
+-(void)calendarViewCallScrollviewScroll;
+
 @end
 
 @protocol MNCalendarViewDelegate <NSObject>
