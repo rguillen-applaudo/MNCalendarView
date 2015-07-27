@@ -505,7 +505,10 @@
 -(void)initEventCirclesForCurrentPage{
     for (UICollectionViewCell *cell in [self.collectionView visibleCells]) {
         if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
-            [self checkEventsInPageForCell:(MNCalendarViewDayCell *)cell];
+            MNCalendarViewDayCell *itemCell = (MNCalendarViewDayCell *)cell;
+            if (itemCell.enabled) {
+                [self checkEventsInPageForCell:(MNCalendarViewDayCell *)cell];
+            }
         }
     }
 }
