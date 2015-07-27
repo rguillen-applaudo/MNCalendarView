@@ -507,7 +507,7 @@
         if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
             MNCalendarViewDayCell *itemCell = (MNCalendarViewDayCell *)cell;
             if (itemCell.enabled) {
-                [self checkEventsInPageForCell:(MNCalendarViewDayCell *)cell];
+                [self checkEventsInPageForCell:(MNCalendarViewDayCell *)cell];x
             }
         }
     }
