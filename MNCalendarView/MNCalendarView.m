@@ -61,6 +61,7 @@
         [self calendarChangedToPage:0];
         
         // calcular pagina
+        [self calendarScrollToDatePositionFor:_selectedDate];
     });
 }
 
@@ -518,6 +519,20 @@
     [_calendarActivityIndicator stopAnimating];
     [_calendarActivityIndicator setHidden:YES];
     [_calendarActivityIndicator removeFromSuperview];
+}
+
+-(void)calendarScrollToDatePositionFor:(NSDate *)date{
+    
+    
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"W"];
+    NSString *stringFromDate = [formatter stringFromDate:date];
+
+    
+    NSLog(@"WEEK OF MONTH %@ scroll %d", stringFromDate, ((int)[stringFromDate intValue] - 1) * 45);
+    int newOffset = ((int)[stringFromDate intValue] - 1) * 45;
+    [self.collectionView setContentOffset:CGPointMake(0, self.collectionView.contentOffset.y + newOffset) animated:YES];
 }
 
 @end
