@@ -16,6 +16,8 @@
 
 @interface MNCalendarView() <UICollectionViewDataSource, UICollectionViewDelegate>
 
+@property (nonatomic, strong) NSMutableArray *dynamicKindsArray;
+
 @property(nonatomic,strong,readwrite) UICollectionView *collectionView;
 @property(nonatomic,strong,readwrite) UICollectionViewFlowLayout *layout;
 
@@ -344,6 +346,9 @@
                         [self placeCirclesForEventKinds:firstFoundObject forCell:cell];
                     }
                 }
+                else if ([self dynamicKindsArrayHasItemForDate:cell.date]) {
+                    [self placeCirclesForEventKinds:[self getDynamicKindsArrayItemFor:cell.date] forCell:cell];
+                }
             }
         }
     }
@@ -351,9 +356,39 @@
 
 -(void)placeCirclesForEventKinds:(NSDictionary *)eventKinds forCell:(MNCalendarViewDayCell *)cell{
     
-    BOOL hasPractice = [[eventKinds valueForKey:@"has_practice"] boolValue];
-    BOOL hasMeet = [[eventKinds valueForKey:@"has_meet"] boolValue];
-    BOOL hasMeeting = [[eventKinds valueForKey:@"has_meeting"] boolValue];
+    BOOL hasPractice;
+    BOOL hasMeet;
+    BOOL hasMeeting;
+    
+    if ([self dynamicKindsArrayHasItemForDate:cell.date]) {
+        NSMutableDictionary *dict = [self getDynamicKindsArrayItemFor:cell.date];
+        if ([[dict objectForKey:@"has_practice"] isKindOfClass:[NSString class]]) {
+            hasPractice = YES;
+        }
+        else{
+            hasPractice = [[eventKinds valueForKey:@"has_practice"] boolValue];
+        }
+        
+        if ([[dict objectForKey:@"has_meet"] isKindOfClass:[NSString class]]) {
+            hasMeet = YES;
+        }
+        else{
+            hasMeet = [[eventKinds valueForKey:@"has_meet"] boolValue];
+        }
+        
+        if ([[dict objectForKey:@"has_meeting"] isKindOfClass:[NSString class]]) {
+            hasMeeting = YES;
+        }
+        else{
+            hasMeeting = [[eventKinds valueForKey:@"has_meeting"] boolValue];
+        }
+
+    }
+    else{
+        hasPractice = [[eventKinds valueForKey:@"has_practice"] boolValue];
+        hasMeet = [[eventKinds valueForKey:@"has_meet"] boolValue];
+        hasMeeting = [[eventKinds valueForKey:@"has_meeting"] boolValue];
+    }
     
     
     [[[cell eventKindsView] subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -507,7 +542,7 @@
         if ([cell isKindOfClass:MNCalendarViewDayCell.class]) {
             MNCalendarViewDayCell *itemCell = (MNCalendarViewDayCell *)cell;
             if (itemCell.enabled) {
-                [self checkEventsInPageForCell:(MNCalendarViewDayCell *)cell];x
+                [self checkEventsInPageForCell:(MNCalendarViewDayCell *)cell];
             }
         }
     }
@@ -559,5 +594,66 @@
 //    [self calendarChangedToPage:pageNo];
     //
 }
+
+-(BOOL)dynamicKindsArrayHasItemForDate:(NSDate *)date
+{
+    NSPredicate *predicateForMainArray = [NSPredicate predicateWithFormat:@"date == %@", [self formatDate:date withFormat:@"YYYY-MM-dd"]];
+    NSArray *filteredMainArray = [self.dynamicKindsArray filteredArrayUsingPredicate:predicateForMainArray];
+    if (filteredMainArray.count > 0) {
+        return YES;
+    }
+    return NO;
+}
+
+-(NSMutableDictionary *)getDynamicKindsArrayItemFor:(NSDate *)date{
+    NSPredicate *predicateForMainArray = [NSPredicate predicateWithFormat:@"date == %@", [self formatDate:date withFormat:@"YYYY-MM-dd"]];
+    NSArray *filteredMainArray = [self.dynamicKindsArray filteredArrayUsingPredicate:predicateForMainArray];
+    NSMutableDictionary *firstObjectMainArray = (NSMutableDictionary *)filteredMainArray.firstObject;
+    if (firstObjectMainArray) {
+        return firstObjectMainArray;
+    }
+    else{
+        return nil;
+    }
+}
+
+-(void)addEventKind:(NSString *)eventKind toDynamicKindsArrayForDate:(NSDate *)date
+{
+    
+    if ([self dynamicKindsArrayHasItemForDate:date]) {
+        NSMutableDictionary *dict = [self getDynamicKindsArrayItemFor:date];
+        if ([eventKind isEqualToString:@"Practice"]) {
+            [dict setValue:@"1" forKey:@"has_practice"];
+        }
+        else if ([eventKind isEqualToString:@"Meet"]) {
+            [dict setValue:@"1" forKey:@"has_meet"];
+        }
+        else if ([eventKind isEqualToString:@"Meeting"]) {
+            [dict setValue:@"1" forKey:@"has_meeting"];
+        }
+
+    }
+    else{
+        NSMutableDictionary *eventKindDict = [[NSMutableDictionary alloc] initWithDictionary:@{@"date" : [self formatDate:date withFormat:@"YYYY-MM-dd"]}];
+        if ([eventKind isEqualToString:@"Practice"]) {
+            [eventKindDict setValue:@"1" forKey:@"has_practice"];
+        }
+        else if ([eventKind isEqualToString:@"Meet"]) {
+            [eventKindDict setValue:@"1" forKey:@"has_meet"];
+        }
+        else if ([eventKind isEqualToString:@"Meeting"]) {
+            [eventKindDict setValue:@"1" forKey:@"has_meeting"];
+        }
+        if (!self.dynamicKindsArray) {
+            self.dynamicKindsArray = [[NSMutableArray alloc] initWithCapacity:0];;
+        }
+        [self.dynamicKindsArray addObject:eventKindDict];
+        
+    }
+    
+    [self initEventCirclesForCurrentPage];
+}
+
+
 
 @end

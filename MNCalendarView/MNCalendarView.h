@@ -50,6 +50,8 @@
 
 -(void)calendarViewCallScrollviewScroll;
 
+-(void)addEventKind:(NSString *)eventKind toDynamicKindsArrayForDate:(NSDate *)date;
+
 @end
 
 @protocol MNCalendarViewDelegate <NSObject>
@@ -59,5 +61,6 @@
 - (BOOL)calendarView:(MNCalendarView *)calendarView shouldSelectDate:(NSDate *)date;
 - (void)calendarView:(MNCalendarView *)calendarView didSelectDate:(NSDate *)date;
 - (void)calendarView:(MNCalendarView *)calendarView shouldCheckEventKindsFromStartDate:(NSDate *)startDate toEndDate:(NSDate *)endDate  inPage:(NSInteger)page;
+
 
 @end
