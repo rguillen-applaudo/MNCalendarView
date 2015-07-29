@@ -281,7 +281,13 @@
   }
 
   if (self.selectedDate && cell.enabled) {
-    [cell setSelected:[date isEqualToDate:self.selectedDate]];
+      BOOL isSelected = [date isEqualToDate:self.selectedDate];
+      if (isSelected) {
+          [cell setSelected:YES];
+      }
+      else{
+          [cell setSelected:NO];
+      }
   }
   
   return cell;
@@ -304,7 +310,10 @@
     MNCalendarViewDayCell *dayCell = (MNCalendarViewDayCell *)cell;
     
     self.selectedDate = dayCell.date;
-    
+      for (MNCalendarViewDayCell  *cellD in self.collectionView.visibleCells) {
+          [cellD setSelected:NO];
+      }
+      [cell setSelected:YES];
     if (self.delegate && [self.delegate respondsToSelector:@selector(calendarView:didSelectDate:)]) {
       [self.delegate calendarView:self didSelectDate:dayCell.date];
     }
