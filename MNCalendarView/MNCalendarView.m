@@ -44,6 +44,9 @@
 @implementation MNCalendarView
 
 - (void)commonInit {
+    self.practiceColor = [UIColor blackColor];
+    self.meetingColor = [UIColor darkGrayColor];
+    self.meetColor = [UIColor grayColor];
   self.calendar   = NSCalendar.currentCalendar;
   self.fromDate   = [NSDate.date mn_beginningOfDay:self.calendar];
   self.toDate     = [self.fromDate dateByAddingTimeInterval:MN_YEAR * 4];
@@ -53,7 +56,7 @@
   self.weekdayCellClass = MNCalendarViewWeekdayCell.class;
   self.dayCellClass     = MNCalendarViewDayCell.class;
   
-  _separatorColor = [UIColor colorWithRed:.85f green:.85f blue:.85f alpha:1.f];
+  _separatorColor = [UIColor colorWithRed:241.0f/255.0f green:242.0f/255.0f blue:242.0f/255.0f alpha:1.0f];
   
   [self addSubview:self.collectionView];
   [self applyConstraints];
@@ -403,13 +406,13 @@
     [[[cell eventKindsView] subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     NSMutableArray *eventsKindArray = [[NSMutableArray alloc] initWithCapacity:2];
     if (hasPractice) {
-        [eventsKindArray addObject:@{@"kind" : @"practice", @"color" : [UIColor blackColor]}];
+        [eventsKindArray addObject:@{@"kind" : @"practice", @"color" : self.practiceColor}];
     }
     if (hasMeet) {
-        [eventsKindArray addObject:@{@"kind" : @"meet", @"color" : [UIColor grayColor]}];
+        [eventsKindArray addObject:@{@"kind" : @"meet", @"color" : self.meetColor}];
     }
     if (hasMeeting) {
-        [eventsKindArray addObject:@{@"kind" : @"meeting", @"color" : [UIColor lightGrayColor]}];
+        [eventsKindArray addObject:@{@"kind" : @"meeting", @"color" : self.meetingColor}];
     }
     
     if (eventsKindArray.count > 0) {

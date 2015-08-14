@@ -28,6 +28,10 @@
 @property(nonatomic,copy)   NSDate     *selectedDate;
 @property(nonatomic, strong) NSMutableArray *calendarKindsArray;
 
+@property (nonatomic, strong) UIColor *practiceColor;
+@property (nonatomic, strong) UIColor *meetingColor;
+@property (nonatomic, strong) UIColor *meetColor;
+
 @property(nonatomic,strong) UIColor *separatorColor UI_APPEARANCE_SELECTOR; // default is the standard separator gray
 
 @property(nonatomic,strong) Class headerViewClass;

@@ -62,7 +62,7 @@ NSString *const MNCalendarViewDayCellIdentifier = @"MNCalendarViewDayCellIdentif
   self.enabled ? UIColor.darkTextColor : UIColor.lightGrayColor;
   
   self.backgroundColor =
-  self.enabled ? UIColor.whiteColor : [UIColor colorWithRed:.96f green:.96f blue:.96f alpha:1.f];
+  self.enabled ? UIColor.whiteColor : [UIColor colorWithRed:241.0f/255.0f green:242.0f/255.0f blue:242.0f/255.0f alpha:1.0f];
 }
 
 - (void)drawRect:(CGRect)rect {
@@ -74,14 +74,14 @@ NSString *const MNCalendarViewDayCellIdentifier = @"MNCalendarViewDayCellIdentif
   
   CGSize size = self.bounds.size;
   
-  if (self.weekday != 7) {
-    CGFloat pixel = 1.f / [UIScreen mainScreen].scale;
-    MNContextDrawLine(context,
-                      CGPointMake(size.width - pixel, pixel),
-                      CGPointMake(size.width - pixel, size.height),
-                      separatorColor,
-                      pixel);
-  }
+  // if (self.weekday != 7) {
+  //   CGFloat pixel = 1.f / [UIScreen mainScreen].scale;
+  //   MNContextDrawLine(context,
+  //                     CGPointMake(size.width - pixel, pixel),
+  //                     CGPointMake(size.width - pixel, size.height),
+  //                     separatorColor,
+  //                     pixel);
+  // }
 }
 
 - (void)prepareForReuse
